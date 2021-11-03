@@ -11,6 +11,7 @@ namespace backend1_uppgift_WebApi.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         [Column(TypeName = "nvarchar(100)")]
         public string FirstName { get; set; }
@@ -26,6 +27,16 @@ namespace backend1_uppgift_WebApi.Models
         [Required]
         [Column(TypeName = "varchar(20)")]
         public string PhoneNumber { get; set; }
+
+        [Required]
+        [Column(TypeName = "nvarchar(100)")]
+        public string CustomerHash { get; set; }
+
+        //Kopplar till Address
+        public int AddressId { get; set; }
+
+        // Referar till Address 
+        public virtual Address Address { get; set; }
 
     }
 

@@ -33,7 +33,9 @@ namespace backend1_uppgift_WebApi
             // Använder SqlContext
             services.AddDbContext<SqlContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
 
-            services.AddControllers();
+            services.AddControllers()
+                // Stänger av loophanteraren
+                .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "backend1_uppgift_WebApi", Version = "v1" });
@@ -51,6 +53,8 @@ namespace backend1_uppgift_WebApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
 

@@ -19,7 +19,13 @@ namespace backend1_uppgift_WebApi.Data
         // Lägger in mina modeller
 
         public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<Customer> Customors { get; set; }
+        public virtual DbSet<SubCategory> SubCategories { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+
+
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
 
     }
 }
+
