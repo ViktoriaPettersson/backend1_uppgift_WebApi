@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend1_uppgift_WebApi.Data;
 using backend1_uppgift_WebApi.Models;
+using Newtonsoft.Json;
 
 namespace backend1_uppgift_WebApi.Controllers
 {
@@ -73,16 +74,48 @@ namespace backend1_uppgift_WebApi.Controllers
             return NoContent();
         }
 
+        // Använder min CreateCustomerModell för att skapa en customer
+
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> PostCustomer(CreateCustomerModel model)
         {
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            // Gör en sökning i databasen där email ska vara lika med model.email
+            var _customer = await _context.Customers.Where(x => x.Email == model.Email).FirstOrDefaultAsync();
 
-            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            // Om _customer är null då vill jag skapa en 
+            if(_customer == null)
+            {
+                var customer = new Customer
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    CustomerHash = model.CustomerHash,
+                    Address = new Address
+                    {
+                        AddressLine = model.AddressLine,
+                        City = model.City,
+                        ZipCode = model.ZipCode
+                    }
+
+                };
+
+                _context.Customers.Add(customer);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            }
+            // Om den redan finns
+            // Skickar tillbaka felmeddelande 
+            return new BadRequestObjectResult(JsonConvert.SerializeObject(new { message = $"Email {model.Email} already exsist" }));
         }
+         
+
+
+
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
